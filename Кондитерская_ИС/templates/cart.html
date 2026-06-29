@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корзина | Кондитерская</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Nunito', sans-serif; }
+        body { background: #fff5f8; }
+        .navbar-sweet { background: white; box-shadow: 0 5px 20px rgba(255, 105, 180, 0.1); padding: 15px 0; }
+        .navbar-brand { font-size: 24px; font-weight: 700; color: #d44c66 !important; text-decoration: none; }
+        .cart-container { background: white; border-radius: 40px; padding: 40px; box-shadow: 0 20px 40px rgba(210, 80, 120, 0.1); margin: 40px 0; }
+        h2 { color: #9c4668; font-weight: 700; margin-bottom: 30px; }
+        .cart-item { padding: 20px; border-bottom: 1px solid #ffe0e8; }
+        .item-name { font-size: 20px; font-weight: 700; color: #333; }
+        .item-price { color: #d81b60; font-weight: 700; font-size: 18px; }
+        .total-box { background: #fce4ec; border-radius: 30px; padding: 30px; margin-top: 30px; }
+        .total-amount { font-size: 36px; font-weight: 800; color: #ad1457; }
+        .btn-order { background: linear-gradient(135deg, #f48fb1 0%, #ec407a 100%); color: white; border-radius: 50px; padding: 18px 40px; font-weight: 700; font-size: 20px; border: none; cursor: pointer; }
+        .btn-order:hover { background: linear-gradient(135deg, #ec407a 0%, #d81b60 100%); }
+        .btn-back { border: 2px solid #f8bbd0; color: #c2185b; border-radius: 50px; padding: 10px 25px; font-weight: 600; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <nav class="navbar-sweet">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('menu') }}" class="navbar-brand">← Продолжить покупки</a>
+            <a href="{{ url_for('user_cabinet') }}" class="btn-back">Кабинет</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="cart-container">
+            <h2>🛒 Ваша корзина</h2>
+            
+            {% if items %}
+                {% for item in items %}
+                <div class="cart-item row align-items-center">
+                    <div class="col-md-6"><div class="item-name">{{ item.name }}</div></div>
+                    <div class="col-md-2"><span class="text-muted">{{ item.qty }} шт.</span></div>
+                    <div class="col-md-2"><span class="item-price">{{ item.price }} руб/шт</span></div>
+                    <div class="col-md-2 text-end"><strong>{{ item.subtotal }} руб.</strong></div>
+                </div>
+                {% endfor %}
+                
+                <div class="total-box">
+                    <div class="row align-items-center">
+                        <div class="col-md-6"><span style="font-size:22px; font-weight:700;">Итого к оплате:</span></div>
+                        <div class="col-md-3"><span class="total-amount">{{ total }} руб.</span></div>
+                        <div class="col-md-3">
+                            <form method="POST">
+                                <button type="submit" class="btn-order w-100">🎂 Оформить заказ</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <div style="font-size:80px;">🛒</div>
+                    <h3 class="mt-4 text-muted">Корзина пуста</h3>
+                    <a href="{{ url_for('menu') }}" class="btn-order mt-3" style="display:inline-block; text-decoration:none;">🍩 Перейти в меню</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

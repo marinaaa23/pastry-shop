@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ панель | 🍰 Кондитерская</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        * { font-family: 'Nunito', sans-serif; }
+        body {
+            background: #fdf2f5;
+        }
+        .navbar-admin {
+            background: linear-gradient(135deg, #ad1457 0%, #c2185b 100%);
+            padding: 15px 0;
+            box-shadow: 0 5px 20px rgba(173, 20, 87, 0.2);
+        }
+        .navbar-brand {
+            color: white !important;
+            font-weight: 700;
+            font-size: 24px;
+        }
+        .btn-light-sweet {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-light-sweet:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+        .card-section {
+            background: white;
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(194, 65, 120, 0.08);
+            border: 1px solid #ffe5ec;
+        }
+        .section-title {
+            color: #9c4668;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+        }
+        .section-title i {
+            font-size: 28px;
+            margin-right: 12px;
+            color: #ec407a;
+        }
+        .table-sweet {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .table-sweet thead {
+            background: #fce4ec;
+            color: #a04055;
+        }
+        .table-sweet th {
+            font-weight: 700;
+            padding: 15px;
+            border: none;
+        }
+        .table-sweet td {
+            padding: 15px;
+            vertical-align: middle;
+            border-color: #ffe0e8;
+        }
+        .btn-pink {
+            background: #f48fb1;
+            color: white;
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s;
+        }
+        .btn-pink:hover {
+            background: #ec407a;
+            color: white;
+        }
+        .btn-danger-soft {
+            background: #ffebee;
+            color: #c62828;
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-weight: 600;
+            border: none;
+        }
+        .btn-danger-soft:hover {
+            background: #ffcdd2;
+        }
+        .form-control-sweet {
+            border: 2px solid #f8bbd0;
+            border-radius: 40px;
+            padding: 12px 20px;
+            background: #fff9fb;
+        }
+        .form-control-sweet:focus {
+            border-color: #ec407a;
+            box-shadow: 0 0 0 3px rgba(236, 64, 122, 0.15);
+            outline: none;
+        }
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .status-new { background: #ffe0b2; color: #e65100; }
+        .status-cooking { background: #b3e5fc; color: #01579b; }
+        .status-ready { background: #c8e6c9; color: #1b5e20; }
+    </style>
+</head>
+<body>
+    <!-- Навигация админа -->
+    <nav class="navbar navbar-admin">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-shield-lock"></i> Администратор: {{ session['username'] }}
+            </a>
+            <a href="{{ url_for('logout') }}" class="btn btn-light-sweet">
+                <i class="bi bi-box-arrow-right"></i> Выйти
+            </a>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} rounded-pill">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <!-- Добавление позиции меню -->
+        <div class="card-section">
+            <h3 class="section-title">
+                <i class="bi bi-plus-circle"></i>
+                Добавить новый десерт
+            </h3>
+            <form method="POST" action="{{ url_for('add_item') }}">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="name" class="form-control form-control-sweet" placeholder="Название (Торт Прага)" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" name="description" class="form-control form-control-sweet" placeholder="Описание">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" step="0.1" name="price" class="form-control form-control-sweet" placeholder="Цена" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-pink w-100">
+                            <i class="bi bi-check-lg"></i> Добавить
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Таблица меню -->
+        <div class="card-section">
+            <h3 class="section-title">
+                <i class="bi bi-cake2"></i>
+                Текущее меню
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-sweet">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Описание</th>
+                            <th>Цена</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in items %}
+                        <tr>
+                            <td><strong>{{ item.name }}</strong></td>
+                            <td>{{ item.description or '—' }}</td>
+                            <td><span class="fw-bold text-success">{{ item.price }} ₽</span></td>
+                            <td>
+                                <a href="{{ url_for('delete_item', item_id=item.id) }}" 
+                                   class="btn btn-danger-soft btn-sm"
+                                   onclick="return confirm('Удалить {{ item.name }}?')">
+                                    <i class="bi bi-trash3"></i> Удалить
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center py-4 text-muted">Меню пока пустое... Добавьте первый десерт!</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Назначение админа -->
+        <div class="card-section">
+            <h3 class="section-title">
+                <i class="bi bi-person-plus"></i>
+                Назначить администратора
+            </h3>
+            <form method="POST" action="{{ url_for('add_admin') }}">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <input type="text" name="username" class="form-control form-control-sweet" placeholder="Логин нового админа" required>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="password" name="password" class="form-control form-control-sweet" placeholder="Пароль" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-pink w-100">
+                            <i class="bi bi-shield-plus"></i> Создать
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="mt-3">
+                <span class="text-muted">👑 Текущие админы:</span>
+                {% for admin in admins %}
+                    <span class="badge bg-secondary bg-opacity-25 text-dark me-2 py-2 px-3 rounded-pill">{{ admin.username }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Заказы -->
+        <div class="card-section">
+            <h3 class="section-title">
+                <i class="bi bi-receipt"></i>
+                Поступившие заказы
+            </h3>
+            <div class="table-responsive">
+                <table class="table table-sweet">
+                    <thead>
+                        <tr>
+                            <th>№</th>
+                            <th>Клиент</th>
+                            <th>Сумма</th>
+                            <th>Дата</th>
+                            <th>Статус</th>
+                            <th>Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td><strong>#{{ order.id }}</strong></td>
+                            <td>{{ order.username }}</td>
+                            <td class="fw-bold text-success">{{ order.total }} ₽</td>
+                            <td>{{ order.order_date[:16] }}</td>
+                            <td>
+                                <form method="POST" action="{{ url_for('update_order', order_id=order.id) }}" class="d-flex gap-2">
+                                    <select name="status" class="form-select form-select-sm rounded-pill" style="width: auto;">
+                                        <option value="Новый" {% if order.status == 'Новый' %}selected{% endif %}>Новый</option>
+                                        <option value="Готовится" {% if order.status == 'Готовится' %}selected{% endif %}>Готовится</option>
+                                        <option value="Готов" {% if order.status == 'Готов' %}selected{% endif %}>Готов</option>
+                                    </select>
+                            </td>
+                            <td>
+                                    <button type="submit" class="btn btn-pink btn-sm">
+                                        <i class="bi bi-arrow-repeat"></i> Обновить
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="text-center py-4 text-muted">Заказов пока нет</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
