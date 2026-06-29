@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход | 🍰 Кондитерская</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Nunito', sans-serif; }
+        body {
+            background: linear-gradient(145deg, #fce4ec 0%, #f8bbd0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 20px;
+        }
+        .cake-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 45px;
+            box-shadow: 0 25px 50px -12px rgba(194, 65, 120, 0.25);
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+        .cake-card:hover {
+            transform: translateY(-5px);
+        }
+        h1 {
+            color: #9c4668;
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        .pastel-input {
+            border: 2px solid #f8bbd0;
+            border-radius: 40px;
+            padding: 14px 22px;
+            background: #fff9fb;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .pastel-input:focus {
+            border-color: #f06292;
+            box-shadow: 0 0 0 4px rgba(240, 98, 146, 0.15);
+            outline: none;
+            background: white;
+        }
+        .btn-sweet {
+            background: linear-gradient(135deg, #f48fb1 0%, #ec407a 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 16px 20px;
+            font-weight: 700;
+            font-size: 18px;
+            box-shadow: 0 10px 20px -5px rgba(236, 64, 122, 0.3);
+            transition: all 0.3s;
+        }
+        .btn-sweet:hover {
+            background: linear-gradient(135deg, #f06292 0%, #d81b60 100%);
+            transform: scale(1.02);
+            box-shadow: 0 15px 25px -5px rgba(216, 27, 96, 0.4);
+            color: white;
+        }
+        .captcha-box {
+            background: #ffe5ec;
+            border-radius: 40px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .captcha-question {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ad1457;
+            letter-spacing: 3px;
+        }
+        .register-link {
+            color: #c2185b;
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 2px dotted #f48fb1;
+        }
+        .register-link:hover {
+            color: #880e4f;
+            border-bottom: 2px solid #ec407a;
+        }
+        .alert {
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            padding: 12px 20px;
+        }
+        .alert-danger {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .alert-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .icon-large {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="cake-card">
+                    <div class="text-center">
+                        <div class="icon-large">🧁✨</div>
+                        <h1>Вход</h1>
+                        <p class="text-muted mb-4">С возвращением в мир сладостей!</p>
+                    </div>
+
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endwith %}
+
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary">👤 Логин</label>
+                            <input type="text" name="username" class="form-control pastel-input" placeholder="Введите логин" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold text-secondary">🔐 Пароль</label>
+                            <input type="password" name="password" class="form-control pastel-input" placeholder="••••••••" required>
+                        </div>
+                        
+                        <div class="captcha-box">
+                            <label class="fw-bold text-secondary mb-2">🤖 Докажите, что вы человек</label>
+                            <div class="captcha-question">{{ captcha_question }}</div>
+                            <input type="number" name="captcha" class="form-control pastel-input text-center mt-2" placeholder="Ответ цифрой" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-sweet w-100 mt-3">🍪 Войти</button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <span class="text-secondary">Нет аккаунта?</span>
+                        <a href="{{ url_for('register') }}" class="register-link ms-2">Зарегистрироваться</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
